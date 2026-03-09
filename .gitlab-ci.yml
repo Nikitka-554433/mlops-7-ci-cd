@@ -1,0 +1,53 @@
+# Этапы пайплайна
+stages:
+  - greeting
+  - test
+
+#Приветствие (greeting)
+greet:
+  stage: greeting
+  image: python:3.8
+  script:
+    - echo "Hello! My name is $MY_LOGIN. My password is $MY_PASSWORD"
+  variables:
+    MY_LOGIN: $MY_LOGIN
+    MY_PASSWORD: $MY_PASSWORD
+
+# Линтер (flake8)
+lint:
+  stage: test
+  image: python:3.8
+  before_script:
+    - pip install flake8
+  script:
+    - flake8 .
+  allow_failure: true  
+  only:
+    - merge_requests
+
+# Unit-тесты
+unit_tests:
+  stage: test
+  image: python:3.8
+  before_script:
+    - pip install -r requirements.txt
+    - pip install pytest
+  script:
+    - pytest tests/unit -v
+  only:
+    - merge_requests
+
+# Интеграционные тесты (ручной запуск)
+integration_tests:
+  stage: test
+  image: python:3.8
+  before_script:
+    - pip install -r requirements.txt
+    - pip install pytest
+  script:
+    - pytest tests/integration -v
+  only:
+    - merge_requests
+  when: manual
+  needs:
+    - unit_tests
