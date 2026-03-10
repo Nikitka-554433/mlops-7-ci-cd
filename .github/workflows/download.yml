@@ -32,11 +32,12 @@ jobs:
         run: |
           mc alias set minio "${{ secrets.MINIO_URL }}" "${{ secrets.ACCESS_KEY }}" "${{ secrets.SECRET_KEY }}"
       
-            - name: Debug download paths
+      - name: Debug download paths
         run: |
           echo "Bucket: ${{ vars.BUCKET_NAME }}"
           echo "File path: ${{ vars.FILE_PATH }}"
           echo "Local path: ${{ vars.LOCAL_PATH }}"
+      
       - name: Download file
         run: |
           mkdir -p /tmp
