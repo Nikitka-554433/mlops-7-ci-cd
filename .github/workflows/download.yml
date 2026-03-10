@@ -21,12 +21,12 @@ jobs:
       - name: Debug secrets
         run: |
           echo "URL: ${{ secrets.MINIO_URL }}"
-          echo "BUCKET: ${{ secrets.BUCKET_NAME }}"
+          echo "BUCKET: ${{ vars.BUCKET_NAME }}"
           echo "Access key length: ${{ secrets.ACCESS_KEY }}"
           echo "Secret key length: ${{ secrets.SECRET_KEY }}"
-          echo "File path: ${{ secrets.FILE_PATH }}"
-          echo "Local path: ${{ secrets.LOCAL_PATH }}"
-          echo "Hash: ${{ secrets.HASH_STRING }}"
+          echo "File path: ${{ vars.FILE_PATH }}"
+          echo "Local path: ${{ vars.LOCAL_PATH }}"
+          echo "Hash: ${{ vars.HASH_STRING }}"
       
       - name: Configure MinIO client
         run: |
@@ -45,4 +45,4 @@ jobs:
       
       - name: Verify MD5
         run: |
-          echo "${{ secrets.HASH_STRING }} ${{ secrets.LOCAL_PATH }}" | md5sum -c -
+          echo "${{ vars.HASH_STRING }} ${{ vars.LOCAL_PATH }}" | md5sum -c -
