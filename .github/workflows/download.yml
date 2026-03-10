@@ -1,0 +1,32 @@
+name: Download from MinIO
+
+on:
+  push:
+    branches: [ "download-image" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  download:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install mc client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o $HOME/mc
+          chmod +x $HOME/mc
+          sudo mv $HOME/mc /usr/local/bin/mc
+      
+      - name: Configure MinIO client
+        run: |
+          mc alias set minio ${{ secrets.MINIO_URL }} ${{ secrets.ACCESS_KEY }} ${{ secrets.SECRET_KEY }}
+      
+      - name: Download file
+        run: |
+          mkdir -p /tmp
+          mc cp minio/${{ secrets.BUCKET_NAME }}/${{ secrets.FILE_PATH }} ${{ secrets.LOCAL_PATH }}
+      
+      - name: Verify MD5
+        run: |
+          echo "${{ secrets.HASH_STRING }} ${{ secrets.LOCAL_PATH }}" | md5sum -c -
